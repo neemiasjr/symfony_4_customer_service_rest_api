@@ -1,7 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vgrankin
- * Date: 18.5.9
- * Time: 21:42
- */
+
+namespace App\Repository;
+
+use Doctrine\ORM\EntityRepository;
+
+class UserRepository extends EntityRepository
+{
+
+}

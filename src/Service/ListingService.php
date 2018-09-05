@@ -5,6 +5,8 @@ namespace App\Service;
 
 use App\Entity\Listing;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ListingService
 {
@@ -28,101 +30,96 @@ class ListingService
      *      'period_id' => (int) Period id. Required.
      *      'user_id' => (int) User id. Required.
      *    ]
-     * @return FootballTeam|string FootballTeam or error message
+     * @return Listing|string Listing or error message
      */
     public function createListing($data)
     {
-        if (empty($data['name']) || empty($data['strip']) || empty((int)$data['league_id'])) {
-            return "Name, strip and league id must be provided to create new football team";
-        }
+        $violations = $this->getViolations($data);
 
         try {
-            $league = $this->em
-                ->getRepository('App:FootballLeague')
-                ->find($data['league_id']);
 
-            if ($league) {
-                $team = new FootballTeam();
-                $team->setName($data['name']);
-                $team->setStrip($data['strip']);
-                $team->setLeague($league);
-
-                $this->em->persist($team);
-                $this->em->flush();
-
-                return $team;
-            } else {
-                return "Unable to find league";
+            $user = $this->em
+                ->getRepository(User::class)
+                ->find((int)$data['user_id']);
+            if (!$user) {
+                return "Unable to find user by given user_id";
             }
 
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
-            return "Team with given name already exists";
+            $section = $this->em
+                ->getRepository(Section::class)
+                ->find((int)$data['section_id']);
+            if (!$section) {
+                return "Unable to find section by given section_id";
+            }
+
+            $city = $this->em
+                ->getRepository(City::class)
+                ->find((int)$data['city_id']);
+            if (!$city) {
+                return "Unable to find city by given city_id";
+            }
+
+            $period = $this->em
+                ->getRepository(Period::class)
+                ->find((int)$data['period_id']);
+            if (!$period) {
+                return "Unable to find period by given period_id";
+            }
+
+            $listing = new Listing();
+            $listing->setCity($city);
+            $listing->setSection($section);
+            $listing->setUser($user);
+
+            $listing->setName($data['name']);
+            $listing->setStrip($data['strip']);
+            $listing->setLeague($league);
+
+            $this->em->persist($listing);
+            $this->em->flush();
+
+            return $listing;
+
         } catch (\Exception $ex) {
-            return "Unable to create team";
+            return "Unable to create listing";
         }
     }
 
     /**
-     * Update football team by given data
+     * Validate listing data and get violations (if any)
      *
-     * @param $data array which contains information about team
+     * @param $data array which contains information about listing
      *    $data = [
-     *      'name' => (string) Team name. Optional.
-     *      'strip' => (string) Team strip. Optional.
-     *      'league_id' => (int) League id. Optional.
+     *      'section_id' => (int) Section id. Required.
+     *      'title' => (string) Title. Required.
+     *      'zip_code' => (string) Zip-code. Required.
+     *      'city_id' => (int) City id. Required.
+     *      'description' => (string) Description. Required.
+     *      'period_id' => (int) Period id. Required.
+     *      'user_id' => (int) User id. Required.
      *    ]
-     * @return FootballTeam|string FootballTeam or error message
+     * @return ConstraintViolationList
      */
-    public function updateTeam(FootballTeam $team, array $data)
+    public function getViolations($data)
     {
-        try {
-            if (isset($data['name'])) {
-                $team->setName($data['name']);
-            }
+        $validator = Validation::createValidator();
 
-            if (isset($data['strip'])) {
-                $team->setStrip($data['strip']);
-            }
+        $zipCodeLength = 5;
+        $constraint = new Assert\Collection(array(
+            'section_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected section_id')),
+            'title' => new Assert\Length(array('min' => 5, 'max' => 50)),
+            'zip_code' => new Assert\Regex(array(
+                "pattern" => "/[0-9]{" . $zipCodeLength . "}/",
+                "message" => "Zip code must consist of exactly {$zipCodeLength} numbers from 0 to 9"
+            )),
+            'city_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected city_id')),
+            'title' => new Assert\Length(array('min' => 5, 'max' => 500)),
+            'period_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected period_id')),
+            'user_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected user_id')),
+        ));
 
-            $league = $team->getLeague();
-            if (isset($data['league_id'])) {
-                if ($league->getId() != $data['league_id']) {
-                    $league = $this->em
-                        ->getRepository('App:FootballLeague')
-                        ->find($data['league_id']);
+        $violations = $validator->validate($data, $constraint);
 
-                    if (!$league) {
-                        return "Unable to find league to update to";
-                    }
-                }
-            }
-
-            $team->setLeague($league);
-
-            $this->em->persist($team);
-            $this->em->flush();
-
-            return $team;
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $ex) {
-            return "Team with given name already exists";
-        } catch (\Exception $ex) {
-            return "Unable to update team";
-        }
-    }
-
-    /**
-     * @param FootballTeam $team
-     * @return bool|string True if team was successfully deleted, error message otherwise
-     */
-    public function deleteTeam(FootballTeam $team)
-    {
-        try {
-            $this->em->remove($team);
-            $this->em->flush();
-        } catch (\Exception $ex) {
-            return "Unable to remove league";
-        }
-
-        return true;
+        return $violations;
     }
 }

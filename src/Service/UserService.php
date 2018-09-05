@@ -21,7 +21,7 @@ class UserService
      */
     public function getUser($email)
     {
-        $user = $this->em->getRepository('App:User')
+        $user = $this->em->getRepository(User::class)
             ->findOneBy(['email' => $email]);
         if ($user) {
             return $user;

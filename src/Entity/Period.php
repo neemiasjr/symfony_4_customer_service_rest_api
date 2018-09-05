@@ -24,6 +24,11 @@ class Period
     private $name;
 
     /**
+     * @ORM\Column(name="date_addon", type="string")
+     */
+    private $dateAddon;
+
+    /**
      * @return mixed
      */
     public function getName(): string
@@ -39,4 +44,19 @@ class Period
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
+    public function getDateAddon()
+    {
+        return $this->dateAddon;
+    }
+
+    /**
+     * @param string $dateAddon
+     */
+    public function setDateAddon($dateAddon): void
+    {
+        $this->dateAddon = $dateAddon;
+    }
 }

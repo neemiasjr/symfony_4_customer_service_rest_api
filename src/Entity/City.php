@@ -13,6 +13,12 @@ class City
 {
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Listing", mappedBy="city")
+     * @ORM\OrderBy({"name"="ASC"})
+     */
+    private $listings;
+
+    /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")

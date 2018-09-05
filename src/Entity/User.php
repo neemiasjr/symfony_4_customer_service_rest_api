@@ -7,10 +7,17 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  * @UniqueEntity("email")
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="user")
  */
 class User
 {
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Listing", mappedBy="user")
+     * @ORM\OrderBy({"name"="ASC"})
+     */
+    private $listings;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="string", unique=true, length=191)
