@@ -68,17 +68,18 @@ class ListingService
             }
 
             $listing = new Listing();
-            $listing->setCity($city);
             $listing->setSection($section);
-            $listing->setUser($user);
+            $listing->setTitle($data['title']);
+            $listing->setZipCode($data['zip_code']);
+            $listing->setCity($city);
+            $listing->setDescription($data['description']);
 
             $listing->setPublicationDate(new \DateTime());
             $expirationDate = $listing->getPublicationDate()
                 ->add(new \DateInterval($period->getIntervalSpec()));
+            $listing->setExpirationDate($expirationDate);
 
-            $listing->setZipCode($data['zip_code']);
-            $listing->setTitle($data['title']);
-            $listing->setDescription($data['description']);
+            $listing->setUser($user);
 
             $this->em->persist($listing);
             $this->em->flush();
@@ -147,6 +148,9 @@ class ListingService
                 $listing->setSection($section);
             }
 
+            $listing->setTitle($data['title']);
+            $listing->setZipCode($data['zip_code']);
+
             if (isset($data['city_id'])) {
                 $city = $this->em
                     ->getRepository(City::class)
@@ -157,6 +161,8 @@ class ListingService
 
                 $listing->setCity($city);
             }
+
+            $listing->setDescription($data['description']);
 
             if (isset($data['period_id'])) {
                 $period = $this->em
@@ -171,10 +177,6 @@ class ListingService
 
                 $listing->setExpirationDate($expirationDate);
             }
-
-            $listing->setZipCode($data['zip_code']);
-            $listing->setTitle($data['title']);
-            $listing->setDescription($data['description']);
 
             $this->em->persist($listing);
             $this->em->flush();
@@ -201,7 +203,7 @@ class ListingService
      *    ]
      * @return ConstraintViolationList
      */
-    public function getUpdateListingViolations(FootballTeam $team, array $data)
+    public function getUpdateListingViolations(array $data)
     {
         $validator = Validation::createValidator();
 
@@ -230,9 +232,7 @@ class ListingService
         $rules = array(
             'section_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected section_id')),
             'title' => new Assert\Length(array('min' => 5, 'max' => 50)),
-            'zip_code' => new Assert\All(array(
-                new ListingAssert\ContainsGermanZipCode()
-            )),
+            'zip_code' => new ListingAssert\ContainsGermanZipCode(),
             'city_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected city_id')),
             'title' => new Assert\Length(array('min' => 5, 'max' => 500)),
             'period_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected period_id')),
