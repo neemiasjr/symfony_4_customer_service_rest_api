@@ -7,13 +7,13 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Class ContainsAlphanumericValidator
+ * Class ContainsGermanZipCodeValidator
  * @package App\Validator\Constraints
  *
  * How to build custom constraint docs: https://symfony.com/doc/current/validation/custom_constraint.html
  *
  */
-class ContainsAlphanumericValidator extends ConstraintValidator
+class ContainsGermanZipCodeValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
