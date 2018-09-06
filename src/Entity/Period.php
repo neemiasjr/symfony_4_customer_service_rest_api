@@ -19,14 +19,14 @@ class Period
     private $id;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", unique=true, length=191)
      */
     private $name;
 
     /**
-     * @ORM\Column(name="date_addon", type="string")
+     * @ORM\Column(name="date_addon", type="string", length=100)
      */
-    private $dateAddon;
+    private $intervalSpec;
 
     /**
      * @return mixed
@@ -47,16 +47,20 @@ class Period
     /**
      * @return string
      */
-    public function getDateAddon()
+    public function getIntervalSpec()
     {
-        return $this->dateAddon;
+        return $this->intervalSpec;
     }
 
     /**
-     * @param string $dateAddon
+     * @param string $intervalSpec
+     * Please set interval_spec according to format specified in PHP manual:
+     *  http://www.php.net/manual/en/dateinterval.construct.php
+     *
+     * Example: 'P3D' which means Period = 3 days
      */
-    public function setDateAddon($dateAddon): void
+    public function setIntervalSpec($intervalSpec): void
     {
-        $this->dateAddon = $dateAddon;
+        $this->intervalSpec = $intervalSpec;
     }
 }

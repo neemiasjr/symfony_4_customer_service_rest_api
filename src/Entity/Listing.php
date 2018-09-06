@@ -3,11 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Listing")
  * @ORM\Table(name="listing")
+ * @ORM\HasLifecycleCallbacks
  */
 class Listing
 {
@@ -21,6 +21,7 @@ class Listing
      * @ORM\JoinColumn(nullable=false)
      */
     private $section;
+
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="listings")
      * @ORM\JoinColumn(nullable=false)
@@ -33,11 +34,11 @@ class Listing
      */
     private $id;
     /**
-     * @ORM\Column(name="zip_code", type="string")
+     * @ORM\Column(name="zip_code", type="string", length=5)
      */
     private $zipCode;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=50)
      */
     private $title;
     /**
@@ -45,7 +46,7 @@ class Listing
      */
     private $description;
     /**
-     * @ORM\Column(name="publication_date", type="datetime", options={"default": 0})
+     * @ORM\Column(name="publication_date", type="datetime")
      */
     private $publicationDate;
     /**
@@ -54,7 +55,7 @@ class Listing
     private $expirationDate;
 
     /**
-     * @return mixed
+     * @return User
      */
     public function getUser()
     {
@@ -62,7 +63,7 @@ class Listing
     }
 
     /**
-     * @param mixed $user
+     * @param User $user
      */
     public function setUser($user): void
     {
@@ -70,7 +71,7 @@ class Listing
     }
 
     /**
-     * @return mixed
+     * @return Section
      */
     public function getSection()
     {
@@ -78,7 +79,7 @@ class Listing
     }
 
     /**
-     * @param mixed $section
+     * @param Section $section
      */
     public function setSection($section): void
     {
@@ -86,7 +87,7 @@ class Listing
     }
 
     /**
-     * @return mixed
+     * @return City
      */
     public function getCity()
     {
@@ -94,7 +95,7 @@ class Listing
     }
 
     /**
-     * @param mixed $city
+     * @param City $city
      */
     public function setCity($city): void
     {
@@ -102,7 +103,7 @@ class Listing
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getZipCode()
     {
@@ -110,7 +111,7 @@ class Listing
     }
 
     /**
-     * @param mixed $zipCode
+     * @param string $zipCode
      */
     public function setZipCode($zipCode): void
     {
@@ -118,7 +119,7 @@ class Listing
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -126,7 +127,7 @@ class Listing
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
      */
     public function setTitle($title): void
     {
@@ -134,7 +135,7 @@ class Listing
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDescription()
     {
@@ -142,7 +143,7 @@ class Listing
     }
 
     /**
-     * @param mixed $description
+     * @param string $description
      */
     public function setDescription($description): void
     {
@@ -150,7 +151,7 @@ class Listing
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getExpirationDate()
     {
@@ -158,12 +159,26 @@ class Listing
     }
 
     /**
-     * @param mixed $expirationDate
+     * @param \DateTime $expirationDate
      */
     public function setExpirationDate($expirationDate): void
     {
         $this->expirationDate = $expirationDate;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getPublicationDate()
+    {
+        return $this->publicationDate;
+    }
 
+    /**
+     * @param \DateTime $publicationDate
+     */
+    public function setPublicationDate($publicationDate): void
+    {
+        $this->publicationDate = $publicationDate;
+    }
 }

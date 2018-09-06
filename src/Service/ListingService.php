@@ -5,8 +5,9 @@ namespace App\Service;
 
 use App\Entity\Listing;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validation;
+use App\Validator\Constraints as ListingAssert;
 
 class ListingService
 {
@@ -32,9 +33,9 @@ class ListingService
      *    ]
      * @return Listing|string Listing or error message
      */
-    public function createListing($data)
+    public function createListing(array $data)
     {
-        $violations = $this->getViolations($data);
+        $violations = $this->getCreateListingViolations($data);
 
         try {
 
@@ -71,9 +72,13 @@ class ListingService
             $listing->setSection($section);
             $listing->setUser($user);
 
-            $listing->setName($data['name']);
-            $listing->setStrip($data['strip']);
-            $listing->setLeague($league);
+            $listing->setPublicationDate(new \DateTime());
+            $expirationDate = $listing->getPublicationDate()
+                ->add(new \DateInterval($period->getIntervalSpec()));
+
+            $listing->setZipCode($data['zip_code']);
+            $listing->setTitle($data['title']);
+            $listing->setDescription($data['description']);
 
             $this->em->persist($listing);
             $this->em->flush();
@@ -100,26 +105,140 @@ class ListingService
      *    ]
      * @return ConstraintViolationList
      */
-    public function getViolations($data)
+    public function getCreateListingViolations(array $data)
+    {
+        $validator = Validation::createValidator();
+        $rules = $this->getValidationRules();
+        $constraint = new Assert\Collection($rules);
+        $violations = $validator->validate($data, $constraint);
+
+        return $violations;
+    }
+
+    /**
+     * Update listing by given data
+     *
+     * @param Listing $listing Listing to update
+     * @param $data array which contains information about listing
+     *    $data = [
+     *      'section_id' => (int) Section id. Optional.
+     *      'title' => (string) Title. Optional.
+     *      'zip_code' => (string) Zip-code. Optional.
+     *      'city_id' => (int) City id. Optional.
+     *      'description' => (string) Description. Optional.
+     *      'period_id' => (int) Period id. Optional.
+     *    ]
+     * @return Listing|string Listing or error message
+     */
+    public function updateListing(Listing $listing, array $data)
+    {
+        $violations = $this->getUpdateListingViolations($data);
+
+        try {
+
+            if (isset($data['section_id'])) {
+                $section = $this->em
+                    ->getRepository(Section::class)
+                    ->find((int)$data['section_id']);
+                if (!$section) {
+                    return "Unable to find section by given section_id";
+                }
+
+                $listing->setSection($section);
+            }
+
+            if (isset($data['city_id'])) {
+                $city = $this->em
+                    ->getRepository(City::class)
+                    ->find((int)$data['city_id']);
+                if (!$city) {
+                    return "Unable to find city by given city_id";
+                }
+
+                $listing->setCity($city);
+            }
+
+            if (isset($data['period_id'])) {
+                $period = $this->em
+                    ->getRepository(Period::class)
+                    ->find((int)$data['period_id']);
+                if (!$period) {
+                    return "Unable to find period by given period_id";
+                }
+
+                $publicationDate = $listing->getPublicationDate();
+                $expirationDate = $publicationDate->add(new \DateInterval($period->getIntervalSpec()));
+
+                $listing->setExpirationDate($expirationDate);
+            }
+
+            $listing->setZipCode($data['zip_code']);
+            $listing->setTitle($data['title']);
+            $listing->setDescription($data['description']);
+
+            $this->em->persist($listing);
+            $this->em->flush();
+
+            return $listing;
+
+        } catch (\Exception $ex) {
+            return "Unable to update listing";
+        }
+    }
+
+    /**
+     * Validate listing data and get violations (if any)
+     *
+     * @param $data array which contains information about listing
+     *    $data = [
+     *      'section_id' => (int) Section id. Optional.
+     *      'title' => (string) Title. Optional.
+     *      'zip_code' => (string) Zip-code. Optional.
+     *      'city_id' => (int) City id. Optional.
+     *      'description' => (string) Description. Optional.
+     *      'period_id' => (int) Period id. Optional.
+     *      'user_id' => (int) User id. Optional.
+     *    ]
+     * @return ConstraintViolationList
+     */
+    public function getUpdateListingViolations(FootballTeam $team, array $data)
     {
         $validator = Validation::createValidator();
 
-        $zipCodeLength = 5;
-        $constraint = new Assert\Collection(array(
+        $rules = $this->getValidationRules();
+
+        // what to update (which optional fields are actually set in $data)?
+        $updateRules = [];
+        $updateKeys = array_keys($data);
+        foreach ($updateKeys as $key) {
+            if (isset($rules[$key])) {
+                $updateRules[$key] = $rules[$key];
+            }
+        }
+
+        $constraint = new Assert\Collection($updateRules);
+        $violations = $validator->validate($data, $constraint);
+
+        return $violations;
+    }
+
+    /**
+     * Validation rules to validate data during listing creation and update.
+     */
+    private function getValidationRules()
+    {
+        $rules = array(
             'section_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected section_id')),
             'title' => new Assert\Length(array('min' => 5, 'max' => 50)),
-            'zip_code' => new Assert\Regex(array(
-                "pattern" => "/[0-9]{" . $zipCodeLength . "}/",
-                "message" => "Zip code must consist of exactly {$zipCodeLength} numbers from 0 to 9"
+            'zip_code' => new Assert\All(array(
+                new ListingAssert\ContainsGermanZipCode()
             )),
             'city_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected city_id')),
             'title' => new Assert\Length(array('min' => 5, 'max' => 500)),
             'period_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected period_id')),
             'user_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected user_id')),
-        ));
+        );
 
-        $violations = $validator->validate($data, $constraint);
-
-        return $violations;
+        return $rules;
     }
 }

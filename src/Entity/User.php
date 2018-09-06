@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
@@ -14,19 +15,25 @@ class User
 {
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Listing", mappedBy="user")
-     * @ORM\OrderBy({"name"="ASC"})
+     * @ORM\OrderBy({"publication_date"="ASC"})
      */
     private $listings;
 
     /**
      * @ORM\Id
-     * @ORM\Column(type="string", unique=true, length=191)
+     * @ORM\Column(type="string", name="id", unique=true, length=191)
      */
     private $email;
     /**
      * @ORM\Column(type="string")
      */
     private $password;
+
+    public function __construct()
+    {
+        // php-array on steroids
+        $this->listings = new ArrayCollection();
+    }
 
     /**
      * @return string
