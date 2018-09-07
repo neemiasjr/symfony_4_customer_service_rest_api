@@ -36,6 +36,14 @@ class Section
     }
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @return ArrayCollection|Listing[]
      */
     public function getListings()

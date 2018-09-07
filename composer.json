@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.6",
+        "sensio/framework-extra-bundle": "^5.2",
         "symfony/console": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
@@ -14,8 +15,10 @@
         "symfony/yaml": "*"
     },
     "require-dev": {
+        "guzzlehttp/guzzle": "^6.3",
         "symfony/dotenv": "*",
-        "symfony/maker-bundle": "^1.7"
+        "symfony/maker-bundle": "^1.7",
+        "symfony/phpunit-bridge": "*"
     },
     "config": {
         "preferred-install": {

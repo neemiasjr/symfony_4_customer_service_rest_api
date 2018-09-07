@@ -36,6 +36,9 @@ class ListingService
     public function createListing(array $data)
     {
         $violations = $this->getCreateListingViolations($data);
+        if (sizeof($violations)) {
+            return $this->getErrorsStr($violations);
+        }
 
         try {
 
@@ -134,6 +137,9 @@ class ListingService
     public function updateListing(Listing $listing, array $data)
     {
         $violations = $this->getUpdateListingViolations($data);
+        if (sizeof($violations)) {
+            return $this->getErrorsStr($violations);
+        }
 
         try {
 
@@ -240,5 +246,41 @@ class ListingService
         );
 
         return $rules;
+    }
+
+    /**
+     * Convert array of violations (if any) to string with specified delimiter
+     *
+     * @param $violations
+     * @return string
+     */
+    private function getErrorsStr($violations)
+    {
+        $errorDelimiter = "###";
+
+        $errors = [];
+        foreach ($violations as $violation) {
+            $errorMessage = $violation->getMessage();
+            $error[] = $errorMessage;
+        }
+
+        $errors = implode($errorDelimiter, $errors);
+
+        return $errors;
+    }
+
+    /**
+     * @param Listing $listing
+     * @return bool|string True if listing was successfully deleted, error message otherwise
+     */
+    public function deleteListing(Listing $listing)
+    {
+        try {
+            $this->em->remove($listing);
+            $this->em->flush();
+        } catch (\Exception $ex) {
+            return "Unable to remove listing";
+        }
+        return true;
     }
 }

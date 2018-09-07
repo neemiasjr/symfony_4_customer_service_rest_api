@@ -27,6 +27,7 @@ class Listing
      * @ORM\JoinColumn(nullable=false)
      */
     private $city;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -100,6 +101,14 @@ class Listing
     public function setCity($city): void
     {
         $this->city = $city;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

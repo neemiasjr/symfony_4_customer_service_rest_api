@@ -31,6 +31,14 @@ class City
     private $name;
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @return mixed
      */
     public function getName(): string
