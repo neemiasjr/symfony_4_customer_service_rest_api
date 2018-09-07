@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3fe69526-3e72-4b09-a59a-744acb6b2809" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Service/ResponseErrorDecoratorService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,11 +17,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ResponseErrorDecoratorService.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ResponseErrorDecoratorService.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Service/ResponseErrorDecoratorService.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+            <state relative-caret-position="240">
+              <caret line="16" column="24" lean-forward="true" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExceptionSubscriber.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="860">
+              <caret line="80" column="1" selection-start-line="80" selection-start-column="1" selection-end-line="80" selection-end-column="1" />
+              <folding>
+                <element signature="e#40#86#0#PHP" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -68,6 +80,7 @@
         <option value="$PROJECT_DIR$/src/Validator/ContainsGermanZipCode.php" />
         <option value="$PROJECT_DIR$/src/Validator/Constraints/ContainsGermanZipCodeValidator.php" />
         <option value="$PROJECT_DIR$/src/Service/ResponseErrorDecoratorService.php" />
+        <option value="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" />
       </list>
     </option>
   </component>
@@ -177,6 +190,12 @@
               <item name="symfony_4_customer_service" type="b2602c69:ProjectViewProjectNode" />
               <item name="symfony_4_customer_service" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="symfony_4_customer_service" type="b2602c69:ProjectViewProjectNode" />
+              <item name="symfony_4_customer_service" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="Repository" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -250,12 +269,12 @@
       <workItem from="1536160124849" duration="7731000" />
       <workItem from="1536244086364" duration="17257000" />
       <workItem from="1536300079193" duration="1023000" />
-      <workItem from="1536327564505" duration="173000" />
+      <workItem from="1536327564505" duration="530000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38219000" />
+    <option name="totallyTimeSpent" value="38576000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
@@ -289,16 +308,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Repository/ListingRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
-          <folding>
-            <element signature="e#34#54#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Service/ListingService.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="930">
@@ -649,8 +658,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Service/ResponseErrorDecoratorService.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+        <state relative-caret-position="240">
+          <caret line="16" column="24" lean-forward="true" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="860">
+          <caret line="80" column="1" selection-start-line="80" selection-start-column="1" selection-end-line="80" selection-end-column="1" />
+          <folding>
+            <element signature="e#40#86#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
