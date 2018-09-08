@@ -5,15 +5,8 @@ namespace App\Service;
 use App\Entity\Period;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PeriodService
+class PeriodService extends BaseService
 {
-    private $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
-
     /**
      * Create period by given data
      *

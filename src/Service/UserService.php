@@ -4,17 +4,12 @@ namespace App\Service;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
 
-class UserService
+class UserService extends BaseService
 {
-    private $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
-
     /**
      * @param $email
      * @return User|string User entity or string in case of error
@@ -56,5 +51,29 @@ class UserService
         } catch (\Exception $ex) {
             return "Unable to create user";
         }
+    }
+
+    /**
+     * Validate user data and get violations (if any)
+     *
+     * @param $data array which contains information about user
+     *    $data = [
+     *      'email' => (string) Title. Required.
+     *      'password' => (string) User id. Required.
+     *    ]
+     * @return ConstraintViolationList
+     */
+    public function getCreateUserViolations($data)
+    {
+        $validator = Validation::createValidator();
+
+        $constraint = new Assert\Collection(array(
+            'email' => new Assert\Email(),
+            'password' => new Assert\Length(array('min' => 5)),
+        ));
+
+        $violations = $validator->validate($data, $constraint);
+
+        return $violations;
     }
 }

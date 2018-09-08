@@ -9,8 +9,8 @@ class ListingControllerTest extends BaseTestCase
 {
     public function testCreateListing____when_Creating_New_Listing____Lising_Is_Created_And_Returned_With_Correct_Response_Status()
     {
-        $section = $this->createTestSection('Section 1')->getId();
-        $sectionId= $section->getId();
+        $section = $this->createTestSection('Section 1');
+        $sectionId = $section->getId();
 
         $title = "Test listing 1";
         $zipCode = "10115";
@@ -28,9 +28,20 @@ class ListingControllerTest extends BaseTestCase
             'period_id' => $periodId,
             'user_id' => $userId
         ];
+
+        print_r(json_encode($data));
+        die();
+
         $response = $this->client->post("listings", [
             'body' => json_encode($data)
         ]);
+
+        $responseData = json_decode($response->getBody(), true);
+
+        print_r("aaaXXXXXXXXXX");
+        print_r($responseData);
+        die();
+
         $this->assertEquals(JsonResponse::HTTP_CREATED, $response->getStatusCode());
         $responseData = json_decode($response->getBody(), true);
 
@@ -56,8 +67,8 @@ class ListingControllerTest extends BaseTestCase
         $this->assertEquals($zipCode, $responseData['data']['zip_code']);
         $this->assertEquals($cityId, $responseData['data']['city_id']);
         $this->assertEquals($description, $responseData['data']['description']);
-        $this->assertEquals($listing>getPublicationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"), $responseData['data']['publication_date']);
-        $this->assertEquals($listing>getExpirationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"), $responseData['data']['expiration_date']);
+        $this->assertEquals($listing > getPublicationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"), $responseData['data']['publication_date']);
+        $this->assertEquals($listing > getExpirationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"), $responseData['data']['expiration_date']);
         $this->assertEquals($userId, $responseData['data']['user_id']);
     }
 }

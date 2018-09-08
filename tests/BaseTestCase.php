@@ -4,6 +4,7 @@ namespace App\Tests;
 
 
 use App\Entity\User;
+use App\Service\SectionService;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -29,6 +30,14 @@ class BaseTestCase extends KernelTestCase
      */
     public function setUp()
     {
+        $container = $this->getPrivateContainer();
+        $sectionService = $container
+            ->get('App\Service\SectionService');
+
+        $container = $this->getPrivateContainer();
+        $cityService = $container
+            ->get('App\Service\CityService');
+
         $this->client = new Client([
             'base_uri' => 'http://cs.loc/api/',
             'exceptions' => false

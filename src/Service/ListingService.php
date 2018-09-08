@@ -4,20 +4,12 @@
 namespace App\Service;
 
 use App\Entity\Listing;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validation;
 use App\Validator\Constraints as ListingAssert;
 
-class ListingService
+class ListingService extends BaseService
 {
-    private $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
-
     /**
      * Create listing by given data
      *
@@ -111,12 +103,9 @@ class ListingService
      */
     public function getCreateListingViolations(array $data)
     {
-        $validator = Validation::createValidator();
         $rules = $this->getValidationRules();
-        $constraint = new Assert\Collection($rules);
-        $violations = $validator->validate($data, $constraint);
 
-        return $violations;
+        return $this->getViolations($data, $rules);
     }
 
     /**
@@ -211,8 +200,6 @@ class ListingService
      */
     public function getUpdateListingViolations(array $data)
     {
-        $validator = Validation::createValidator();
-
         $rules = $this->getValidationRules();
 
         // what to update (which optional fields are actually set in $data)?
@@ -224,10 +211,7 @@ class ListingService
             }
         }
 
-        $constraint = new Assert\Collection($updateRules);
-        $violations = $validator->validate($data, $constraint);
-
-        return $violations;
+        return $this->getViolations($data, $updateRules);
     }
 
     /**
@@ -235,38 +219,28 @@ class ListingService
      */
     private function getValidationRules()
     {
+
         $rules = array(
-            'section_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected section_id')),
-            'title' => new Assert\Length(array('min' => 5, 'max' => 50)),
-            'zip_code' => new ListingAssert\ContainsGermanZipCode(),
-            'city_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected city_id')),
-            'title' => new Assert\Length(array('min' => 5, 'max' => 500)),
-            'period_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected period_id')),
-            'user_id' => new Assert\Type(array('type' => 'integer', 'message' => 'Unexpected user_id')),
+            "section_id" => new Assert\Type(array("type" => "integer", "message" => "Unexpected section_id")),
+            "zip_code" => new ListingAssert\ContainsGermanZipCode(),
+            "city_id" => new Assert\Type(array("type" => "integer", "message" => "Unexpected city_id")),
+            "title" => new Assert\Length(array(
+                "min" => 5,
+                "max" => 50,
+                "minMessage" => "Title must be at least {{ limit }} characters long",
+                "maxMessage" => "Title cannot be longer than {{ limit }} characters",
+            )),
+            "description" => new Assert\Length(array(
+                "min" => 50,
+                "max" => 500,
+                "minMessage" => "Description must be at least {{ limit }} characters long",
+                "maxMessage" => "Description cannot be longer than {{ limit }} characters",
+            )),
+            "period_id" => new Assert\Type(array("type" => "integer", "message" => "Unexpected period_id")),
+            "user_id" => new Assert\Email(array("message" => "Unexpected user_id")),
         );
 
         return $rules;
-    }
-
-    /**
-     * Convert array of violations (if any) to string with specified delimiter
-     *
-     * @param $violations
-     * @return string
-     */
-    private function getErrorsStr($violations)
-    {
-        $errorDelimiter = "###";
-
-        $errors = [];
-        foreach ($violations as $violation) {
-            $errorMessage = $violation->getMessage();
-            $error[] = $errorMessage;
-        }
-
-        $errors = implode($errorDelimiter, $errors);
-
-        return $errors;
     }
 
     /**
@@ -282,5 +256,18 @@ class ListingService
             return "Unable to remove listing";
         }
         return true;
+    }
+
+    /**
+     * @param array $filter
+     * @return array
+     */
+    public function getListings(array $filter): array
+    {
+        $listings = $this->em
+            ->getRepository(Listing::class)
+            ->findAllFiltered($filter);
+
+        return $listings;
     }
 }

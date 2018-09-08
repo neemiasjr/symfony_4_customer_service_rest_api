@@ -5,26 +5,27 @@ namespace App\Controller;
 
 use App\Entity\Listing;
 use App\Service\ListingService;
-use App\Service\CityService;
 use App\Service\ResponseErrorDecoratorService;
+use App\Service\SectionService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
 class ListingController extends Controller
 {
     /**
      * @Route("/testme")
      */
-    public function testMe(CityService $cityService)
+    public function testMe(SectionService $sectionService)
     {
         $name = 'City 1';
-        $city = $cityService->createCity([
+        $s = $sectionService->createSection([
             'name' => $name
         ]);
 
-        return new JsonResponse(['data' => ['name' => $city->getName()]], 200);
+        return new JsonResponse(['data' => ['name' => $s->getName()]], 200);
     }
 
     /**
@@ -56,11 +57,12 @@ class ListingController extends Controller
         }
 
         $result = $listingService->createListing($data);
+
         if ($result instanceof Listing) {
             $status = JsonResponse::HTTP_CREATED;
             $data = [
                 'data' => [
-                    'listing_id' => $result->getId(),
+                    'id' => $result->getId(),
                     'section_id' => $result->getSection()->getId(),
                     'title' => $result->getTitle(),
                     'zip_code' => $result->getZipCode(),
@@ -84,6 +86,7 @@ class ListingController extends Controller
      *
      * @Route("/api/listings/{id}")
      * @Method("PUT")
+     * @param Listing $listing
      * @param Request $request
      * @param ListingService $listingService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -113,7 +116,7 @@ class ListingController extends Controller
             $status = JsonResponse::HTTP_OK;
             $data = [
                 'data' => [
-                    'listing_id' => $result->getId(),
+                    'id' => $result->getId(),
                     'section_id' => $result->getSection()->getId(),
                     'title' => $result->getTitle(),
                     'zip_code' => $result->getZipCode(),
@@ -154,6 +157,67 @@ class ListingController extends Controller
             $status = JsonResponse::HTTP_BAD_REQUEST;
             $data = $errorDecorator->decorateError($status, $result);
         }
+
+        return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/api/listings/{id}")
+     * @Method("GET")
+     * @param Listing $listing Symfony will find listing entity by {id} and will assign it to $listing
+     * @return JsonResponse Data array which contains information about listing
+     */
+    public function getListing(Listing $listing)
+    {
+        $status = JsonResponse::HTTP_OK;
+        $data = [
+            'data' => [
+                'id' => $listing->getId(),
+                'section_id' => $listing->getSection()->getId(),
+                'title' => $listing->getTitle(),
+                'zip_code' => $listing->getZipCode(),
+                'city_id' => $listing->getCity()->getId(),
+                'description' => $listing->getDescription(),
+                'publication_date' => $listing->getPublicationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"),
+                'expiration_date' => $listing->getExpirationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"),
+                'user_id' => $listing->getUser()->getEmail(),
+            ]
+        ];
+
+        return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/api/listings")
+     * @Method("GET")
+     * @param ListingService $listingService
+     * @param array $filter
+     * @return JsonResponse List of listings
+     */
+    public function getListings(ListingService $listingService, array $filter)
+    {
+        $listings = $listingService->getListings($filter);
+        $listingsArr = [];
+        foreach ($listings as $listing) {
+            $listingsArr[] = [
+                'id' => $listing->getId(),
+                'section_id' => $listing->getSection()->getId(),
+                'title' => $listing->getTitle(),
+                'zip_code' => $listing->getZipCode(),
+                'city_id' => $listing->getCity()->getId(),
+                'description' => $listing->getDescription(),
+                'publication_date' => $listing->getPublicationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"),
+                'expiration_date' => $listing->getExpirationDate()->format("yyyy-MM-dd HH:mm:ss.SSS"),
+                'user_id' => $listing->getUser()->getEmail(),
+            ];
+        }
+
+        $status = JsonResponse::HTTP_OK;
+        $data = [
+            'data' => [
+                'listings' => $listingsArr
+            ]
+        ];
 
         return new JsonResponse($data, $status);
     }

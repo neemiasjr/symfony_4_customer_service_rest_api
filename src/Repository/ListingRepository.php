@@ -9,7 +9,7 @@ class ListingRepository extends EntityRepository
 {
     /**
      *
-     * @param $filter Array of filters to use during listings selection
+     * @param array $filter Array of filters to use during listings selection
      *
      *    Filter example (all keys are optional):
      *
@@ -17,10 +17,11 @@ class ListingRepository extends EntityRepository
      *      'section_id' => (int) Section id. Optional.
      *      'city_id' => (int) City id. Optional.
      *      'days_back' => (int) Look for listings up to `days_back` days after initial creation. Optional.
+     *      'excluded_user_id' => (int) Exclude listings for given user id. Optional.
      *    ]
      * @return Listing[]
      */
-    public function findAllFiltered($filter): array
+    public function findAllFiltered(array $filter): array
     {
         $qb = $this->createQueryBuilder('l')
             ->orderBy('l.publicationDate', 'ASC');
@@ -41,6 +42,10 @@ class ListingRepository extends EntityRepository
             if (isset($filter['section_id'])) {
                 $qb->andWhere('l.section_id = :section_id')
                     ->setParameter('section_id', $filter['section_id']);
+            }
+            if (isset($filter['excluded_user_id'])) {
+                $qb->andWhere('l.user_id != :user_id')
+                    ->setParameter('user_id', $filter['excluded_user_id']);
             }
         }
 

@@ -5,15 +5,8 @@ namespace App\Service;
 use App\Entity\City;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CityService
+class CityService extends BaseService
 {
-    private $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
-
     /**
      * Create city by given data
      *

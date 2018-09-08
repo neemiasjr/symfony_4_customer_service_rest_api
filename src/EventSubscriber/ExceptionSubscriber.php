@@ -31,9 +31,9 @@ class ExceptionSubscriber implements EventSubscriberInterface
     {
         // return the subscribed events, their methods and priorities
         return array(
-            KernelEvents::EXCEPTION => array(
-                array('processException', 100)
-            )
+//            KernelEvents::EXCEPTION => array(
+//                array('processException', 100)
+//            )
         );
     }
 
