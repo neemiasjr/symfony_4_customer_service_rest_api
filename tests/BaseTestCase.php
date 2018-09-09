@@ -3,8 +3,11 @@
 namespace App\Tests;
 
 
+use App\Entity\City;
+use App\Entity\Listing;
+use App\Entity\Period;
+use App\Entity\Section;
 use App\Entity\User;
-use App\Service\SectionService;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -137,7 +140,44 @@ class BaseTestCase extends KernelTestCase
         ]);
     }
 
-    private function getPrivateContainer()
+    /**
+     * @return array which contains Listing and data array
+     */
+    protected function createTestListingWithData(): array
+    {
+        $section = $this->createTestSection('Section 1');
+        $sectionId = $section->getId();
+
+        $title = "Test listing 1";
+        $zipCode = "10115";
+        $cityId = $this->createTestCity('City 1')->getId();
+        $description = "Test listing 1 description Test listing 1 description";
+        $periodId = $this->createTestPeriod("Plus 60 days", "P60D")->getId();
+        $userId = $this->createTestUser("test1@restapier.com", "pass1")->getEmail();
+
+        $data = [
+            'section_id' => $sectionId,
+            'title' => $title,
+            'zip_code' => $zipCode,
+            'city_id' => $cityId,
+            'description' => $description,
+            'period_id' => $periodId,
+            'user_id' => $userId
+        ];
+
+        $container = $this->getPrivateContainer();
+        $listingService = $container
+            ->get('App\Service\ListingService');
+
+        $listing = $listingService->createListing($data);
+
+        return [
+            'listing' => $listing,
+            'data' => $data
+        ];
+    }
+
+    protected function getPrivateContainer()
     {
         self::bootKernel();
 

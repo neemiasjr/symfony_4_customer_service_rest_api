@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\City;
 use Doctrine\ORM\EntityRepository;
 
 class ListingRepository extends EntityRepository

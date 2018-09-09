@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\Listing")
+ * @ORM\Entity(repositoryClass="App\Repository\ListingRepository")
  * @ORM\Table(name="listing")
  * @ORM\HasLifecycleCallbacks
  */
@@ -168,11 +168,22 @@ class Listing
     }
 
     /**
-     * @param \DateTime $expirationDate
+     * Set expiration date by given interval specification
+     *
+     * @param string $intervalSpec
+     * @return boolean|string True is expiration date is successfully set, string error otherwise
      */
-    public function setExpirationDate($expirationDate): void
+    public function setExpirationDate($intervalSpec)
     {
-        $this->expirationDate = $expirationDate;
+        try {
+            $expirationDate = clone $this->getPublicationDate();
+            $expirationDate = $expirationDate->add(new \DateInterval($intervalSpec));
+            $this->expirationDate = $expirationDate;
+        } catch (\Exception $e) {
+            return "Unable to set expiration date by given interval specification: $intervalSpec.";
+        }
+
+        return true;
     }
 
     /**

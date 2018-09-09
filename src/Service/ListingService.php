@@ -3,7 +3,11 @@
 
 namespace App\Service;
 
+use App\Entity\City;
 use App\Entity\Listing;
+use App\Entity\Period;
+use App\Entity\Section;
+use App\Entity\User;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as ListingAssert;
@@ -33,10 +37,9 @@ class ListingService extends BaseService
         }
 
         try {
-
             $user = $this->em
                 ->getRepository(User::class)
-                ->find((int)$data['user_id']);
+                ->find($data['user_id']);
             if (!$user) {
                 return "Unable to find user by given user_id";
             }
@@ -70,9 +73,11 @@ class ListingService extends BaseService
             $listing->setDescription($data['description']);
 
             $listing->setPublicationDate(new \DateTime());
-            $expirationDate = $listing->getPublicationDate()
-                ->add(new \DateInterval($period->getIntervalSpec()));
-            $listing->setExpirationDate($expirationDate);
+
+            $res = $listing->setExpirationDate($period->getIntervalSpec());
+            if ($res !== true) {
+                return $res; // error
+            }
 
             $listing->setUser($user);
 
@@ -125,6 +130,10 @@ class ListingService extends BaseService
      */
     public function updateListing(Listing $listing, array $data)
     {
+        if (!sizeof($data)) {
+            return $listing;
+        }
+
         $violations = $this->getUpdateListingViolations($data);
         if (sizeof($violations)) {
             return $this->getErrorsStr($violations);
@@ -143,8 +152,13 @@ class ListingService extends BaseService
                 $listing->setSection($section);
             }
 
-            $listing->setTitle($data['title']);
-            $listing->setZipCode($data['zip_code']);
+            if (isset($data['title'])) {
+                $listing->setTitle($data['title']);
+            }
+
+            if (isset($data['zip_code'])) {
+                $listing->setZipCode($data['zip_code']);
+            }
 
             if (isset($data['city_id'])) {
                 $city = $this->em
@@ -157,7 +171,9 @@ class ListingService extends BaseService
                 $listing->setCity($city);
             }
 
-            $listing->setDescription($data['description']);
+            if (isset($data['description'])) {
+                $listing->setDescription($data['description']);
+            }
 
             if (isset($data['period_id'])) {
                 $period = $this->em
@@ -167,10 +183,10 @@ class ListingService extends BaseService
                     return "Unable to find period by given period_id";
                 }
 
-                $publicationDate = $listing->getPublicationDate();
-                $expirationDate = $publicationDate->add(new \DateInterval($period->getIntervalSpec()));
-
-                $listing->setExpirationDate($expirationDate);
+                $res = $listing->setExpirationDate($period->getIntervalSpec());
+                if ($res !== true) {
+                    return $res; // error
+                }
             }
 
             $this->em->persist($listing);
