@@ -186,10 +186,12 @@ We can use POSTMAN to access all endpoints:
     }        
     
     ===========================================================
-    - Update attributes of a listing. Let's say we want to change `city` and `title` of some particular listing:
+    - Update attributes of a listing. 
+      Let's say we want to change `city` and `title` of some particular listing:
     
     method: PUT
-    url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to modify, for example http://localhost:8000/api/listings/326)
+    url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to modify, 
+                                                   for example http://localhost:8000/api/listings/326)
     Body (select raw) and add this line: 
     {"title": "New title 1", "city_id": 2}        	
     
@@ -210,8 +212,9 @@ We can use POSTMAN to access all endpoints:
     }
             
     ===========================================================    	
-    - Get listings. Let's say we want to get listings for some particular section and city. You can do this using
-      filter:                                                       
+    - Get listings. 
+      Let's say we want to get listings for some particular section and city. 
+      You can do this using filter:                                                       
     
     method: GET
     url: http://localhost:8000/api/listings?section_id=1&city_id=1&days_back=30&excluded_user_id=1 
@@ -248,13 +251,16 @@ We can use POSTMAN to access all endpoints:
     - Delete listing:
     
     method: DELETE
-    url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to delete, for example http://localhost:8000/api/listings/326)	       
+    url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to delete, 
+      for example http://localhost:8000/api/listings/326)	       
     
     Response HTTP status should be 204 (endpoint is successfully executed, but there is nothing to return)
     
     ===========================================================
-    * Errors are also taken into account (see PHPUnit tests on which errors are addressed) and usually if there was
-      an error during your request, special JSON response will be return. Here are examples:
+    * Errors are also taken into account (see PHPUnit tests on which errors are addressed) 
+      and usually if there was an error during your request, special JSON response will be return. 
+      
+    Here are examples:
     
     You will see this in case item is deleted already or in case of inexisting endpoint:  
     {
@@ -281,7 +287,7 @@ We can use POSTMAN to access all endpoints:
     }    
     
     * There are many other errors addressed, but JSON result you get back is consistent and looks 
-      like in examples just described.   
+      like in examples just described.
 
 ## To improve this REST API you can implement:
 - pagination
