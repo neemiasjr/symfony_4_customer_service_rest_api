@@ -18,7 +18,7 @@ class ListingRepository extends EntityRepository
      *      'days_back' => (int) Look for listings up to `days_back` days after initial creation. Optional.
      *      'excluded_user_id' => (int) Exclude listings for given user id. Optional.
      *    ]
-     * @return Listing[]
+     * @return Listing[] Array of Listing objects
      */
     public function findAllFiltered(array $filter): array
     {
@@ -28,28 +28,28 @@ class ListingRepository extends EntityRepository
         if (sizeof($filter)) {
             if (isset($filter['days_back'])) {
 
-                $date = date('yyyy-MM-dd', strtotime("-{$filter['days_back']} days"));
+                $date = date('Y-m-d', strtotime("-{$filter['days_back']} days"));
 
-                $qb->andWhere('l.publication_date BETWEEN :back_then AND :today')
-                    ->setParameter('today', date('yyyy-MM-dd'))
+                $qb->andWhere('l.publicationDate >= :back_then')
                     ->setParameter('back_then', $date);
             }
             if (isset($filter['city_id'])) {
-                $qb->andWhere('l.city_id = :city_id')
+                $qb->andWhere('IDENTITY(l.city) = :city_id')
                     ->setParameter('city_id', $filter['city_id']);
             }
             if (isset($filter['section_id'])) {
-                $qb->andWhere('l.section_id = :section_id')
+                $qb->andWhere('IDENTITY(l.section) = :section_id')
                     ->setParameter('section_id', $filter['section_id']);
             }
             if (isset($filter['excluded_user_id'])) {
-                $qb->andWhere('l.user_id != :user_id')
-                    ->setParameter('user_id', $filter['excluded_user_id']);
+                $qb->andWhere('IDENTITY(l.user) = :excluded_user_id')
+                    ->setParameter('excluded_user_id', $filter['excluded_user_id']);
             }
         }
 
-        $qb->getQuery();
+        $qb->andWhere('l.expirationDate >= :today')
+            ->setParameter('today', date('Y-m-d H:i:s'));
 
-        return $qb->execute();
+        return $qb->getQuery()->execute();
     }
 }

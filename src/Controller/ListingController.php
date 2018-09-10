@@ -6,7 +6,6 @@ namespace App\Controller;
 use App\Entity\Listing;
 use App\Service\ListingService;
 use App\Service\ResponseErrorDecoratorService;
-use App\Service\SectionService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ListingController extends Controller
 {
+    /**
+     * @Route("/api/testme", methods={"GET"})
+     */
+    public function testme()
+    {
+        return new JsonResponse(['data' => ['test' => 'OK']], 200);
+    }
+
     /**
      * Creates new listing by passed JSON data
      *
@@ -93,34 +100,46 @@ class ListingController extends Controller
 
     /**
      * @Route("/api/listings", methods={"GET"})
+     * @param Request $request
      * @param ListingService $listingService
-     * @param array $filter
+     * @param ResponseErrorDecoratorService $errorDecorator
      * @return JsonResponse List of listings
      */
-    public function getListings(ListingService $listingService, array $filter)
+    public function getListings(
+        Request $request,
+        ListingService $listingService,
+        ResponseErrorDecoratorService $errorDecorator
+    )
     {
-        $listings = $listingService->getListings($filter);
-        $listingsArr = [];
-        foreach ($listings as $listing) {
-            $listingsArr[] = [
-                'id' => $listing->getId(),
-                'section_id' => $listing->getSection()->getId(),
-                'title' => $listing->getTitle(),
-                'zip_code' => $listing->getZipCode(),
-                'city_id' => $listing->getCity()->getId(),
-                'description' => $listing->getDescription(),
-                'publication_date' => $listing->getPublicationDate()->format("Y-m-d H:i:s"),
-                'expiration_date' => $listing->getExpirationDate()->format("Y-m-d H:i:s"),
-                'user_id' => $listing->getUser()->getEmail(),
-            ];
-        }
+        $filter = $request->query->all();
+        $result = $listingService->getListings($filter);
 
-        $status = JsonResponse::HTTP_OK;
-        $data = [
-            'data' => [
-                'listings' => $listingsArr
-            ]
-        ];
+        if (is_array($result)) {
+            $listingsArr = [];
+            foreach ($result as $listing) {
+                $listingsArr[] = [
+                    'id' => $listing->getId(),
+                    'section_id' => $listing->getSection()->getId(),
+                    'title' => $listing->getTitle(),
+                    'zip_code' => $listing->getZipCode(),
+                    'city_id' => $listing->getCity()->getId(),
+                    'description' => $listing->getDescription(),
+                    'publication_date' => $listing->getPublicationDate()->format("Y-m-d H:i:s"),
+                    'expiration_date' => $listing->getExpirationDate()->format("Y-m-d H:i:s"),
+                    'user_id' => $listing->getUser()->getEmail(),
+                ];
+            }
+
+            $status = JsonResponse::HTTP_OK;
+            $data = [
+                'data' => [
+                    'listings' => $listingsArr
+                ]
+            ];
+        } else {
+            $status = JsonResponse::HTTP_BAD_REQUEST;
+            $data = $errorDecorator->decorateError($status, $result);
+        }
 
         return new JsonResponse($data, $status);
     }

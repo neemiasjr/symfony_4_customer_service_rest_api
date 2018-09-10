@@ -11,6 +11,7 @@ use App\Entity\User;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as ListingAssert;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ListingService extends BaseService
 {
@@ -212,22 +213,14 @@ class ListingService extends BaseService
      *      'period_id' => (int) Period id. Optional.
      *      'user_id' => (int) User id. Optional.
      *    ]
-     * @return ConstraintViolationList
+     * @return ConstraintViolationListInterface
      */
-    public function getUpdateListingViolations(array $data)
+    public function getUpdateListingViolations(array $data): ConstraintViolationListInterface
     {
         $rules = $this->getValidationRules();
-
-        // what to update (which optional fields are actually set in $data)?
-        $updateRules = [];
-        $updateKeys = array_keys($data);
-        foreach ($updateKeys as $key) {
-            if (isset($rules[$key])) {
-                $updateRules[$key] = $rules[$key];
-            }
-        }
-
-        return $this->getViolations($data, $updateRules);
+        return $this->getViolations(
+            $data, $rules, ['allowMissingFields' => true]
+        );
     }
 
     /**
@@ -276,10 +269,36 @@ class ListingService extends BaseService
 
     /**
      * @param array $filter
-     * @return array
+     *
+     *    $filter = [
+     *      'section_id' => (int) Section id. Optional.
+     *      'city_id' => (int) City id. Optional.
+     *      'days_back' => (int) Look for listings up to `days_back` days after initial creation. Optional.
+     *      'excluded_user_id' => (int) Exclude listings for given user id. Optional.
+     *    ]
+     *
+     * @return array|string Array of listings or error message
      */
-    public function getListings(array $filter): array
+    public function getListings(array $filter)
     {
+        $daysBackMax = 30;
+
+        if (sizeof($filter)) {
+            $filterRules = array(
+                "section_id" => new Assert\Regex(array("pattern" => "/^[1-9]\d*$/", "message" => "Unexpected section_id")),
+                "city_id" => new Assert\Regex(array("pattern" => "/^[1-9]\d*$/", "message" => "Unexpected city_id")),
+                "days_back" => new Assert\Range(array("min" => 1, "max" => $daysBackMax)),
+                "excluded_user_id" => new Assert\Email(array("message" => "Unexpected excluded_user_id")),
+            );
+
+            if (sizeof($filterRules)) {
+                $violations = $this->getViolations($filter, $filterRules, ['allowMissingFields' => true]);
+                if (sizeof($violations)) {
+                    return $this->getErrorsStr($violations);
+                }
+            }
+        }
+
         $listings = $this->em
             ->getRepository(Listing::class)
             ->findAllFiltered($filter);

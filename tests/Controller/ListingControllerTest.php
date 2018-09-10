@@ -194,6 +194,48 @@ class ListingControllerTest extends BaseTestCase
         $this->assertEquals($errorMsg, $responseData['error']['message']);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testGetListings____when_Getting_Existing_Listings_Having_Filter_Values____Success_Response_Is_Returned_With_Data()
+    {
+        $section = $this->createTestSection("Section 1");
+        $city = $this->createTestCity("City 1");
+        $period = $this->createTestPeriod("90 days", "P90D");
+        $user = $this->createTestUser("test2@restapier.com", "test1234");
+
+        $test = $this->createTestListingWithData([
+            'title' => 'Listin 1',
+            'section' => $section,
+            'city' => $city,
+            'period' => $period,
+            'user' => $user
+        ]);
+
+        $data = $test['data'];
+
+        $filter = [
+            'section_id' => $data['section_id'],
+            'city_id' => $data['city_id'],
+            'days_back' => 10,
+            'excluded_user_id' => "test2@restapier.com"
+        ];
+
+        $response = $this->client->get(
+            "listings"
+            . "?section_id={$filter['section_id']}"
+            . "&city_id={$filter['city_id']}"
+            . "&days_back={$filter['days_back']}"
+            . "&excluded_user_id={$filter['excluded_user_id']}"
+        );
+
+        $responseData = json_decode($response->getBody(), true);
+
+
+        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
+        $responseData = json_decode($response->getBody(), true);
+    }
+
     public function testUpdateListing____when_Updating_Listing_With_Correct_Data____Listing_Is_Updated_And_Returned_With_Correct_Response_Status()
     {
         $test = $this->createTestListingWithData();

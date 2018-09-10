@@ -143,17 +143,20 @@ class BaseTestCase extends KernelTestCase
     /**
      * @return array which contains Listing and data array
      */
-    protected function createTestListingWithData(): array
+    protected function createTestListingWithData($params = []): array
     {
-        $section = $this->createTestSection('Section 1');
+        $section = isset($params['section']) ? $params['section'] : $this->createTestSection('Section 1');
         $sectionId = $section->getId();
 
-        $title = "Test listing 1";
+        $title = isset($params['title']) ? $params['title'] : "Test listing 1";
         $zipCode = "10115";
-        $cityId = $this->createTestCity('City 1')->getId();
+        $city = isset($params['city']) ? $params['city'] : $this->createTestCity('City 1');
+        $cityId = $city->getId();
         $description = "Test listing 1 description Test listing 1 description";
-        $periodId = $this->createTestPeriod("Plus 60 days", "P60D")->getId();
-        $userId = $this->createTestUser("test1@restapier.com", "pass1")->getEmail();
+        $period = isset($params['period']) ? $params['period'] : $this->createTestPeriod("Plus 60 days", "P60D");
+        $periodId = $period->getId();
+        $user = isset($params['user']) ? $params['user'] : $this->createTestUser("test1@restapier.com", "pass1");
+        $userId = $user->getEmail();
 
         $data = [
             'section_id' => $sectionId,
