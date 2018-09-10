@@ -91,6 +91,19 @@ class ListingController extends Controller
     }
 
     /**
+     * Get listings filtered by (optional params given in a query string)
+     *
+     * Here is usage example:
+     *
+     * url: http://localhost:8000/api/listings?section_id=1&city_id=1&days_back=30&excluded_user_id=1
+     *   (where
+     *   - section_id is id of a category you want to filter by
+     *   - city_id is id of a city to filter by
+     *   - days_back is used to get listings published up to 30 days ago
+     *   - excluded_user_id if listing belongs to given excluded_user_id, it will be filtered out
+     *    * all filter keys are optional (you can use none, one or all of them if needed)
+     *   )
+     *
      * @Route("/api/listings", methods={"GET"})
      * @param Request $request
      * @param ListingService $listingService
