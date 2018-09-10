@@ -1,4 +1,4 @@
-# Symfony 4 JWT REST API example/boilerplate/demo (no authentication)
+# Symfony 4 REST API example/boilerplate/demo (no authentication)
 
 This is a boilerplate implementation of Symfony 4 REST API (without authentication). 
 It is created with best REST API practices in mind (except authentification). 
@@ -56,7 +56,7 @@ See "Usage/testing" section.
         - https://symfony.com/doc/current/configuration/environments.html
         
     - go to project directory and run following commands to create database using Doctrine:
-        - php bin/console doctrine:database:create (to create database called `football`, it will figure out db name based on your DATABASE_URL config)		
+        - php bin/console doctrine:database:create (to create database called `customer_service`, it will figure out db name based on your DATABASE_URL config)		
         - php bin/console doctrine:schema:update --force (executes queries to create/update all Entities in the database in accordance to latest code)
         
         * example of command execution on Windows machine: C:\Users\admin\PhpProjects\symfony_restapi>php bin/console doctrine:database:create
@@ -107,5 +107,5 @@ See "Usage/testing" section.
           PHP date interval formats. More information here: 
           http://www.php.net/manual/de/dateinterval.format.php).
           
-           
+
      
