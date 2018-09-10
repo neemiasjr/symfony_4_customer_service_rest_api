@@ -14,14 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 class ListingController extends Controller
 {
     /**
-     * @Route("/api/testme", methods={"GET"})
-     */
-    public function testme()
-    {
-        return new JsonResponse(['data' => ['test' => 'OK']], 200);
-    }
-
-    /**
      * Creates new listing by passed JSON data
      *
      * @Route("/api/listings", methods={"POST"})
