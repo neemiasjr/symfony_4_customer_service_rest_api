@@ -241,7 +241,7 @@ class ListingControllerTest extends BaseTestCase
         $user = $this->createTestUser("test2@restapier.com", "test1234");
 
         $test = $this->createTestListingWithData([
-            'title' => 'Listin 1',
+            'title' => 'Listing 1',
             'section' => $section,
             'city' => $city,
             'period' => $period,

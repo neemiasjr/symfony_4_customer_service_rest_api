@@ -131,3 +131,128 @@ https://blog.mwaysolutions.com/2014/06/05/10-best-practices-for-better-restful-a
 - All tests are located in /tests folder
 - In most cases the following test-case naming convention is used: MethodUnderTest____Scenario____Behavior()
      
+## Usage/testing:
+
+    First of all, start your MySQL server and PHP server. Here is example of how to start local PHP server on Windows 10:
+    C:\Users\admin\PhpProjects\symfony_restapi>php -S 127.0.0.1:8000 -t public
+    * After that http://localhost:8000 should be up and running
+    
+    * If you use docker, make sure PHP and MySQL (with required database) containers are up and running
+
+You can simply look at and run PHPUnit tests (look at tests folder where all test files are located) 
+to execute all possible REST API endpoints. (To run all tests execute this command from project's root folder: 
+"php bin/phpunit"), but if you want, you can also use tools like POSTMAN to manually access REST API endpoints. 
+Here is how to test all currently available API endpoints:
+    
+We can use POSTMAN to access all endpoints:
+
+    * Here is a table of possible operations:
+    
+    --------------------------- --------  -------------------- 
+     Action                      Method    Path                
+    --------------------------- --------  --------------------  
+     Create listing              POST      /api/listings       
+     Get listing                 GET       /api/listings/{id}  
+     Get listings (filtered)     GET       /api/listings       
+     Update listing              PUT       /api/listings/{id}  
+     Delete                      DELETE    /api/listings/{id}
+    --------------------------- --------  --------------------     
+    
+    * First of all, clear DB and install some sample data using SQL queries provided above.
+        
+    - Here is how to access REST API endpoint to create listing:
+    
+    method: POST
+    url: http://localhost:8000/api/listings
+    Body (select raw) and add this line: 
+    
+    {"section_id":1,"title":"Test listing 1","zip_code":"10115","city_id":1,"description":"Test listing 1 description Test listing 1 description","period_id":1,"user_id":"test1@restapier.com"}        
+    
+    Response should look similar to this:
+    
+    {
+        "data": {
+            "id": 326,
+            "section_id": 1,
+            "title": "Test listing 1",
+            "zip_code": "10115",
+            "city_id": 1,
+            "description": "Test listing 1 description Test listing 1 description",
+            "publication_date": "2018-09-10 14:29:33",
+            "expiration_date": "2018-09-13 14:29:33",
+            "user_id": "test1@restapier.com"
+        }
+    }        
+    
+    - Update attributes of a listing. Let's say we want to change `city` and `title` of some particular listing:
+    
+    method: PUT
+    url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to modify, for example http://localhost:8000/api/listings/326)
+    Body (select raw) and add this line: 
+    {"title": "New title 1", "city_id": 2}        	
+    
+    Response should look similar to this:
+    
+    {
+        "data": {
+            "id": 326,
+            "section_id": 1,
+            "title": "New title 1",
+            "zip_code": "10115",
+            "city_id": 2,
+            "description": "Test listing 1 description Test listing 1 description",
+            "publication_date": "2018-09-10 14:29:33",
+            "expiration_date": "2018-09-13 14:29:33",
+            "user_id": "test1@restapier.com"
+        }
+    }
+                	
+    - Get listings. Let's say we want to get listings for some particular section and city. You can do this using
+      filter:                                                       
+    
+    method: GET
+    url: http://localhost:8000/api/listings?section_id=1&city_id=1&days_back=30&excluded_user_id=1 
+        (where 
+            - section_id is id of a category you want to filter by
+            - city_id is id of a city to filter by
+            - days_back is used to get listings published up to 30 days ago
+            - excluded_user_id if listing belongs to given excluded_user_id, it will be filtered out
+            * all filter keys are optional (you can use none, one or all of them if needed)
+            )
+    Body: none (this is a GET request, so we pass params via query string)     
+    
+    Response should look similar to this:
+    
+    {
+        "data": {
+            "listings": [
+                {
+                    "id": 326,
+                    "section_id": 1,
+                    "title": "New title 1",
+                    "zip_code": "10115",
+                    "city_id": 2,
+                    "description": "Test listing 1 description Test listing 1 description",
+                    "publication_date": "2018-09-10 14:29:33",
+                    "expiration_date": "2018-09-13 14:29:33",
+                    "user_id": "test1@restapier.com"
+                }
+            ]
+        }
+    }
+    
+    - Delete listing:
+    
+    method: DELETE
+    url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to delete, for example http://localhost:8000/api/listings/326)	       
+    
+    Response HTTP status should be 204 (endpoint is successfully executed, but there is nothing to return)
+                	
+                    
+
+## To improve this REST API you can implement:
+- pagination
+- customize App\EventSubscriber to also support debug mode during development (to debug status 500 etc.) 
+ (currently you need to manually go to processException() and just use "return;" on the first line of this method's body to avoid exception "prettyfying")
+- SSL (https connection)
+- there are many strings returned from services in case of various errors (see try/catch cases in FootballTeamService.php for example). It will be probably better to convert these to exceptions instead.
