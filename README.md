@@ -70,3 +70,33 @@ See "Usage/testing" section.
             * add it right below where it says: "<!-- define your env variables for the test env here -->"
             <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/customer_service" /><!-- this is how my config looks like -->
             * read more here: https://symfony.com/doc/4.0/testing/database.html
+    - If you want to try this API without manually inserting new records, here are some example data you can use:
+    
+        DELETE FROM `listing`;
+        
+        DELETE FROM `city`;
+        INSERT INTO `city` (`id`, `name`) VALUES (1, 'Berlin');
+        INSERT INTO `city` (`id`, `name`) VALUES (2, 'Porta Westfalica');
+        INSERT INTO `city` (`id`, `name`) VALUES (3, 'Lommatzsch');
+        INSERT INTO `city` (`id`, `name`) VALUES (4, 'Hamburg');
+        INSERT INTO `city` (`id`, `name`) VALUES (5, 'Bülzig');
+        INSERT INTO `city` (`id`, `name`) VALUES (6, 'Diesbar-Seußlitz');
+        
+        DELETE FROM `period`;
+        INSERT INTO `period` (`id`, `name`, `date_addon`) VALUES (1, 'Plus 3 days', 'P3D');
+        INSERT INTO `period` (`id`, `name`, `date_addon`) VALUES (2, 'Plus 20 days', 'P40D');
+        INSERT INTO `period` (`id`, `name`, `date_addon`) VALUES (3, 'Plus 60 days', 'P60D');
+        
+        DELETE FROM `section`;
+        INSERT INTO `section` (`id`, `name`) VALUES (1, 'Sonstige Umzugsleistungen');
+        INSERT INTO `section` (`id`, `name`) VALUES (2, 'Abtransport, Entsorgung und Entrümpelung');
+        INSERT INTO `section` (`id`, `name`) VALUES (3, 'Fensterreinigung');
+        INSERT INTO `section` (`id`, `name`) VALUES (4, 'Holzdielen schleifen');
+        INSERT INTO `section` (`id`, `name`) VALUES (5, 'Kellersanierung');
+        
+        DELETE FROM `user`;
+        INSERT INTO `user` (`id`, `password`) VALUES ('test1@restapier.com', '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
+        INSERT INTO `user` (`id`, `password`) VALUES ('test2@restapier.com', '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
+    
+    
+     
