@@ -70,7 +70,7 @@ See "Usage/testing" section.
             * add it right below where it says: "<!-- define your env variables for the test env here -->"
             <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/customer_service" /><!-- this is how my config looks like -->
             * read more here: https://symfony.com/doc/4.0/testing/database.html
-    - If you want to try this API without manually inserting new records, here are some example data you can use:
+    - If you want to try this API without manually inserting new records, here are some example records to start with:
     
         DELETE FROM `listing`;
         
@@ -98,5 +98,11 @@ See "Usage/testing" section.
         INSERT INTO `user` (`id`, `password`) VALUES ('test1@restapier.com', '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
         INSERT INTO `user` (`id`, `password`) VALUES ('test2@restapier.com', '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
     
-    
+        * These records are required in order to create listing using REST API. This is because
+          listing consists of several fields, including id of the city where listing is published,
+          period which will be used to decided when listing will expire (in the examples above - 
+          in 3 days, in 40 days and in 60 days from publishing date (P3D, P40D and P60D are 
+          PHP date interval formats. More information here: http://www.php.net/manual/de/dateinterval.format.php).
+          
+           
      
