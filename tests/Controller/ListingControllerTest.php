@@ -194,9 +194,45 @@ class ListingControllerTest extends BaseTestCase
         $this->assertEquals($errorMsg, $responseData['error']['message']);
     }
 
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
+    public function testGetListing____when_Getting_Existing_Listing_With_Correct_Data____Listing_Is_Returned_With_Correct_Response_Status()
+    {
+        $test = $this->createTestListingWithData();
+        $listing = $test['listing'];
+
+        $response = $this->client->get("listings/{$listing->getId()}", []);
+
+        $responseData = json_decode($response->getBody(), true);
+
+        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
+
+        $this->assertArrayHasKey("data", $responseData);
+        $this->assertArrayHasKey("id", $responseData['data']);
+        $this->assertArrayHasKey("section_id", $responseData['data']);
+        $this->assertArrayHasKey("title", $responseData['data']);
+        $this->assertArrayHasKey("zip_code", $responseData['data']);
+        $this->assertArrayHasKey("city_id", $responseData['data']);
+        $this->assertArrayHasKey("description", $responseData['data']);
+        $this->assertArrayHasKey("publication_date", $responseData['data']);
+        $this->assertArrayHasKey("expiration_date", $responseData['data']);
+        $this->assertArrayHasKey("user_id", $responseData['data']);
+
+        // get just created listing
+        $container = $this->getPrivateContainer();
+        $listing = $container->get('doctrine')
+            ->getRepository(Listing::class)
+            ->find((int)$responseData['data']['id']);
+
+        $this->assertEquals($listing->getId(), $responseData['data']['id']);
+        $this->assertEquals($listing->getSection()->getId(), $responseData['data']['section_id']);
+        $this->assertEquals($listing->getTitle(), $responseData['data']['title']);
+        $this->assertEquals($listing->getZipCode(), $responseData['data']['zip_code']);
+        $this->assertEquals($listing->getCity()->getId(), $responseData['data']['city_id']);
+        $this->assertEquals($listing->getDescription(), $responseData['data']['description']);
+        $this->assertEquals($listing->getPublicationDate()->format("Y-m-d H:i:s"), $responseData['data']['publication_date']);
+        $this->assertEquals($listing->getExpirationDate()->format("Y-m-d H:i:s"), $responseData['data']['expiration_date']);
+        $this->assertEquals($listing->getUser()->getEmail(), $responseData['data']['user_id']);
+    }
+
     public function testGetListings____when_Getting_Existing_Listings_Having_Filter_Values____Success_Response_Is_Returned_With_Data()
     {
         $section = $this->createTestSection("Section 1");
