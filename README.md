@@ -159,7 +159,8 @@ We can use POSTMAN to access all endpoints:
     --------------------------- --------  --------------------     
     
     * First of all, clear DB and install some sample data using SQL queries provided above.
-        
+    
+    ===========================================================    
     - Here is how to access REST API endpoint to create listing:
     
     method: POST
@@ -184,6 +185,7 @@ We can use POSTMAN to access all endpoints:
         }
     }        
     
+    ===========================================================
     - Update attributes of a listing. Let's say we want to change `city` and `title` of some particular listing:
     
     method: PUT
@@ -206,7 +208,8 @@ We can use POSTMAN to access all endpoints:
             "user_id": "test1@restapier.com"
         }
     }
-                	
+            
+    ===========================================================    	
     - Get listings. Let's say we want to get listings for some particular section and city. You can do this using
       filter:                                                       
     
@@ -241,6 +244,7 @@ We can use POSTMAN to access all endpoints:
         }
     }
     
+    ===========================================================
     - Delete listing:
     
     method: DELETE
@@ -248,6 +252,7 @@ We can use POSTMAN to access all endpoints:
     
     Response HTTP status should be 204 (endpoint is successfully executed, but there is nothing to return)
     
+    ===========================================================
     * Errors are also taken into account (see PHPUnit tests on which errors are addressed) and usually if there was
       an error during your request, special JSON response will be return. Here are examples:
     
