@@ -109,6 +109,9 @@ See "Usage/testing" section.
           
 ## Implementation details:
 
+- No external libraries are used for this REST API. 
+Everything is intentionally coded from scratch 
+(as a demo project to explicitly demonstrate REST API application design) 
 - In terms of workflow the following interaction is used: to get the job done for any 
 given request usually something like this is happening: Controller uses Service 
 (which uses Service) which uses Repository which uses Entity. This way we have a good 
