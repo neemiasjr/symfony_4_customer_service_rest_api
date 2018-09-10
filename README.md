@@ -155,7 +155,7 @@ We can use POSTMAN to access all endpoints:
      Get listing                 GET       /api/listings/{id}  
      Get listings (filtered)     GET       /api/listings       
      Update listing              PUT       /api/listings/{id}  
-     Delete                      DELETE    /api/listings/{id}
+     Delete listing              DELETE    /api/listings/{id}
     --------------------------- --------  --------------------     
     
     * First of all, clear DB and install some sample data using SQL queries provided above.
@@ -247,8 +247,36 @@ We can use POSTMAN to access all endpoints:
     url: http://localhost:8000/api/listings/{id} (where {id} is id of existing listing you want to delete, for example http://localhost:8000/api/listings/326)	       
     
     Response HTTP status should be 204 (endpoint is successfully executed, but there is nothing to return)
-                	
-                    
+    
+    * Errors are also taken into account (see PHPUnit tests on which errors are addressed) and usually if there was
+      an error during your request, special JSON response will be return. Here are examples:
+    
+    You will see this in case item is deleted already or in case of inexisting endpoint:  
+    {
+        "error": {
+            "code": 404,
+            "message": "Not Found"
+        }
+    }    
+    
+    Here is response in case you tried to filter by city_id=XXX:      
+    {
+        "error": {
+            "code": 400,
+            "message": "Unexpected city_id"
+        }
+    }    
+    
+    Here is a response in case you are trying to use inexisting section id to create new listing:    
+    {
+        "error": {
+            "code": 400,
+            "message": "Unable to find section by given section_id"
+        }
+    }    
+    
+    * There are many other errors addressed, but JSON result you get back is consistent and looks 
+      like in examples just described.   
 
 ## To improve this REST API you can implement:
 - pagination
