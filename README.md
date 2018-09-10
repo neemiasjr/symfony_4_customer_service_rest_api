@@ -95,14 +95,17 @@ See "Usage/testing" section.
         INSERT INTO `section` (`id`, `name`) VALUES (5, 'Kellersanierung');
         
         DELETE FROM `user`;
-        INSERT INTO `user` (`id`, `password`) VALUES ('test1@restapier.com', '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
-        INSERT INTO `user` (`id`, `password`) VALUES ('test2@restapier.com', '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
+        INSERT INTO `user` (`id`, `password`) VALUES ('test1@restapier.com', 
+            '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
+        INSERT INTO `user` (`id`, `password`) VALUES ('test2@restapier.com', 
+            '$2y$10$dK0QHbmFiBaOKDx0sjNFAemqBhSjdjifTg6HZE3P6mQ9hIbAPraey');
     
         * These records are required in order to create listing using REST API. This is because
           listing consists of several fields, including id of the city where listing is published,
           period which will be used to decided when listing will expire (in the examples above - 
           in 3 days, in 40 days and in 60 days from publishing date (P3D, P40D and P60D are 
-          PHP date interval formats. More information here: http://www.php.net/manual/de/dateinterval.format.php).
+          PHP date interval formats. More information here: 
+          http://www.php.net/manual/de/dateinterval.format.php).
           
            
      
