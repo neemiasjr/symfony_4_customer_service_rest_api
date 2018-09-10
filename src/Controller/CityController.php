@@ -6,8 +6,7 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Service\CityService;
 use App\Service\ResponseErrorDecoratorService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,8 +16,7 @@ class CityController extends Controller
     /**
      * Creates new city by passed JSON data
      *
-     * @Route("/api/cities")
-     * @Method("POST")
+     * @Route("/api/cities", methods={"POST"})
      * @param Request $request
      * @param CityService $cityService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -62,8 +60,7 @@ class CityController extends Controller
     /**
      * Update city by passed JSON data
      *
-     * @Route("/api/cities/{id}")
-     * @Method("PUT")
+     * @Route("/api/cities/{id}", methods={"PUT"})
      * @param City $city
      * @param Request $request
      * @param CityService $cityService
@@ -107,8 +104,7 @@ class CityController extends Controller
     }
 
     /**
-     * @Route("/api/cities/{id}")
-     * @Method("DELETE")
+     * @Route("/api/cities/{id}", methods={"DELETE"})
      * @param City $city
      * @param CityService $cityService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -133,8 +129,7 @@ class CityController extends Controller
     }
 
     /**
-     * @Route("/api/cities/{id}")
-     * @Method("GET")
+     * @Route("/api/cities/{id}", methods={"GET"})
      * @param City $city Symfony will find city entity by {id} and will assign it to $city
      * @return JsonResponse Data array which contains information about city
      */
@@ -154,8 +149,7 @@ class CityController extends Controller
     }
 
     /**
-     * @Route("/api/cities")
-     * @Method("GET")
+     * @Route("/api/cities", methods={"GET"})
      * @param CityService $cityService
      * @return JsonResponse List of cities
      */

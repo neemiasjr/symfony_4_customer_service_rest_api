@@ -6,8 +6,7 @@ namespace App\Controller;
 use App\Entity\Section;
 use App\Service\SectionService;
 use App\Service\ResponseErrorDecoratorService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,8 +16,7 @@ class SectionController extends Controller
     /**
      * Creates new section by passed JSON data
      *
-     * @Route("/api/sections")
-     * @Method("POST")
+     * @Route("/api/sections", methods={"POST"})
      * @param Request $request
      * @param SectionService $sectionService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -62,8 +60,7 @@ class SectionController extends Controller
     /**
      * Update section by passed JSON data
      *
-     * @Route("/api/sections/{id}")
-     * @Method("PUT")
+     * @Route("/api/sections/{id}", methods={"PUT"})
      * @param Section $section
      * @param Request $request
      * @param SectionService $sectionService
@@ -107,8 +104,7 @@ class SectionController extends Controller
     }
 
     /**
-     * @Route("/api/sections/{id}")
-     * @Method("DELETE")
+     * @Route("/api/sections/{id}", methods={"DELETE"})
      * @param Section $section
      * @param SectionService $sectionService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -133,8 +129,7 @@ class SectionController extends Controller
     }
 
     /**
-     * @Route("/api/sections/{id}")
-     * @Method("GET")
+     * @Route("/api/sections/{id}", methods={"GET"})
      * @param Section $section Symfony will find section entity by {id} and will assign it to $section
      * @return JsonResponse Data array which contains information about section
      */
@@ -154,14 +149,13 @@ class SectionController extends Controller
     }
 
     /**
-     * @Route("/api/sections")
-     * @Method("GET")
+     * @Route("/api/sections", methods={"GET"})
      * @param SectionService $sectionService
      * @return JsonResponse List of sections
      */
     public function getCities(SectionService $sectionService)
     {
-        $sections = $sectionService->getCities();
+        $sections = $sectionService->getSections();
         $sectionsArr = [];
         foreach ($sections as $section) {
             $sectionsArr[] = [

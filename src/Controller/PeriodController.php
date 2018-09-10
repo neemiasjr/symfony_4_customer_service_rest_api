@@ -6,8 +6,7 @@ namespace App\Controller;
 use App\Entity\Period;
 use App\Service\PeriodService;
 use App\Service\ResponseErrorDecoratorService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,8 +16,7 @@ class PeriodController extends Controller
     /**
      * Creates new period by passed JSON data
      *
-     * @Route("/api/periods")
-     * @Method("POST")
+     * @Route("/api/periods", methods={"POST"})
      * @param Request $request
      * @param PeriodService $periodService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -63,8 +61,7 @@ class PeriodController extends Controller
     /**
      * Update period by passed JSON data
      *
-     * @Route("/api/periods/{id}")
-     * @Method("PUT")
+     * @Route("/api/periods/{id}", methods={"PUT"})
      * @param Period $period
      * @param Request $request
      * @param PeriodService $periodService
@@ -109,8 +106,7 @@ class PeriodController extends Controller
     }
 
     /**
-     * @Route("/api/periods/{id}")
-     * @Method("DELETE")
+     * @Route("/api/periods/{id}", methods={"DELETE"})
      * @param Period $period
      * @param PeriodService $periodService
      * @param ResponseErrorDecoratorService $errorDecorator
@@ -135,8 +131,7 @@ class PeriodController extends Controller
     }
 
     /**
-     * @Route("/api/periods/{id}")
-     * @Method("GET")
+     * @Route("/api/periods/{id}", methods={"GET"})
      * @param Period $period Symfony will find period entity by {id} and will assign it to $period
      * @return JsonResponse Data array which contains information about period
      */
@@ -157,8 +152,7 @@ class PeriodController extends Controller
     }
 
     /**
-     * @Route("/api/periods")
-     * @Method("GET")
+     * @Route("/api/periods", methods={"GET"})
      * @param PeriodService $periodService
      * @return JsonResponse List of periods
      */
